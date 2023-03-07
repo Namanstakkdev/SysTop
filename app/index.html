@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"/>
 		<title>SysTop | System Monitor</title>
 		<link rel="stylesheet" href="css/style.css" />
 		<link rel="stylesheet" href="css/all.min.css" />
@@ -24,7 +25,7 @@
 				<ul>
 					<li><strong>Computer Name: </strong><span id="comp-name"></span></li>
 					<li><strong>OS: </strong><span id="os"></span></li>
-					<li><strong>System Uptime: </strong><span id="sys-uptime"></span></li>
+					<li><strong>Uptime: </strong><span id="sys"></span></li>
 					<li><strong>Memory Total: </strong><span id="mem-total"></span></li>
 				</ul>
 			</div>
@@ -62,5 +63,42 @@
 		</nav>
 
 		<script src="js/tabs.js"></script>
+		<script src="js/monitor.js"></script>
+		<script>
+			const settingsForm=document.getElementById('settings-form')
+			const nav=document.getElementById('nav')
+
+			ipcRenderer.on('settings.get',(e,settings)=>{
+				document.getElementById('cpu-overload').value=settings.cpuoverload
+				document.getElementById('alert-frequency').value=settings.alertFrequency
+			
+			})
+
+			settingsForm.addEventListener('submit',(e)=>
+			{
+				e.preventDefault()
+				const cpuoverload=document.getElementById('cpu-overload').value
+				const alertFrequency=document.getElementById('alert-frequency').value
+
+				ipcRenderer.send('settings:set',{
+					cpuoverload,
+					alertFrequency,
+				})
+
+				showAlert('Setting Saved')
+			})
+
+			function showAlert(msg){
+				const alert=document.getElementById('alert')
+				alert.classList.remove('hide')
+				alert.classList.add('alert')
+				alert.innerText=msg
+				setTimeout(()=> alert.classList.add('hide'),3000)
+			}
+
+			ipcRenderer.on('nav:toggle',()=>{
+				nav.classList.toggle('hide')
+			})
+		</script>
 	</body>
 </html>
