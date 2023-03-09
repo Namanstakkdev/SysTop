@@ -80,7 +80,7 @@
 				const cpuoverload=document.getElementById('cpu-overload').value
 				const alertFrequency=document.getElementById('alert-frequency').value
 
-				ipcRenderer.send('settings:set',{
+				ipcRenderer.send('settings.set',{
 					cpuoverload,
 					alertFrequency,
 				})

@@ -5,7 +5,7 @@ const path = require("path");
 const MainWindow = require("./MainWindow");
 const AppTray = require("./AppTray");
 // Set env
-process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "development";
 
 const isDev = process.env.NODE_ENV !== "production" ? true : false;
 const isMac = process.platform === "darwin" ? true : false;
@@ -17,7 +17,7 @@ const store = new Store({
   configName: "user-settings",
   defaults: {
     settings: {
-      cpuoverload: 1,
+      cpuoverload: 80,
       alertFrequency: 1,
     },
   },
@@ -76,7 +76,7 @@ const menu = [
     : []),
 ];
 
-ipcMain.on("settings:set", (e, value) => {
+ipcMain.on("settings.set", (e, value) => {
   store.set("settings", value);
   mainWindow.webContents.send("settings.get", store.get("settings"));
 });
